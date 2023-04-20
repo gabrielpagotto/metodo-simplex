@@ -1,3 +1,4 @@
+from decimal import Decimal
 from fractions import Fraction
 from warnings import warn
 
@@ -168,9 +169,9 @@ class Simplex(object):
             if '_' in objective_function_coeffs[i]:
                 coeff, index = objective_function_coeffs[i].split('_')
                 if objective_function_coeffs[i-1] == '-':
-                    self.coeff_matrix[0][int(index)-1] = Fraction(coeff[:-1] + "/1")
+                    self.coeff_matrix[0][int(index)-1] = Fraction(Fraction(Decimal(coeff[:-1])), 1)
                 else:
-                    self.coeff_matrix[0][int(index)-1] = Fraction("-" + coeff[:-1] + "/1")
+                    self.coeff_matrix[0][int(index)-1] = Fraction(Fraction(Decimal("-" + coeff[:-1])), 1)
 
     def check_alternate_solution(self):
         for i in range(len(self.coeff_matrix[0])):

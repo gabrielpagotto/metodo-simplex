@@ -1,7 +1,7 @@
 from simplex import Simplex
 
 # Primeira aplicação
-funcaoObjetivo = ('maximize', '4x_1 + 3x_2')
+funcaoObjetivo = ('max', '4x_1 + 3x_2')
 restricoes = [
     '2x_1 + 1x_2 <= 1000', 
     '1x_1 + 1x_2 <= 800', 
@@ -14,7 +14,7 @@ print(simplex.solution)
 print(simplex.optimize_val)
 
 # Segunda aplicação
-funcaoObjetivo = ('maximize', '10x_1 + 6.5x_2 + 8_x3 + 9_x4')
+funcaoObjetivo = ('max', '10x_1 + 6.5x_2 + 8x_3 + 9x_4')
 restricoes = [
     '1x_1 + 1x_2 + 1x_3 + 1x_4 <= 25', 
     '9x_1 + 25x_2 + 7x_3 + 8x_4 <= 480', 
