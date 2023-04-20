@@ -1,27 +1,36 @@
 from decimal import Decimal
 from fractions import Fraction
-from warnings import warn
-
-
+""""
+A classe Simplex é criada com três parâmetros: o número de variáveis, as restrições do problema e a função objetivo. 
+A função init armazena esses parâmetros e inicializa algumas variáveis ​​importantes. Em seguida, ele chama o método 
+construct_matrix_from_constraints para construir a matriz de coeficientes que será usada no algoritmo simplex.
+"""
 class Simplex(object):
+
+    """
+    calcula a solução final do problema de programação linear e armazena o resultado na variável solution. Se o problema 
+    de programação linear for um problema de minimização, o método objetivo_minimize é usado. Caso contrário, o método 
+    objetivo_maximize é usado. A função objetivo final é armazenada na variável optimize_val. Se a solução final for 
+    solução inviável ou não limitada, o código irá gerar um erro.
+    """
     def __init__(self, num_vars, constraints, objective_function):
         """
-        num_vars: Number of variables
+        num_vars: Número de variáveis
 
-        equations: A list of strings representing constraints
-        each variable should be start with x followed by a underscore
-        and a number
-        eg of constraints
+        equações: uma lista de strings representando restrições
+        cada variável deve começar com x seguido por um sublinhado
+        e um número
+        ex. de restrições
         ['1x_1 + 2x_2 >= 4', '2x_3 + 3x_1 <= 5', 'x_3 + 3x_2 = 6']
-        Note that in x_num, num should not be more than num_vars.
-        Also single spaces should be used in expressions.
+        Observe que em x_num, num não deve ser maior que num_vars.
+        Também espaços simples devem ser usados ​​em expressões.
 
-        objective_function: should be a tuple with first element
-        either 'min' or 'max', and second element be the equation
-        eg 
+        função_objetiva: deve ser uma tupla com o primeiro elemento
+        seja 'min' ou 'max', e o segundo elemento seja a equação
+        por exemplo
         ('min', '2x_1 + 4x_3 + 5x_2')
 
-        For solution finding algorithm uses two-phase simplex method
+        Para encontrar a solução, o algoritmo usa o método simplex de duas fases
         """
         self.num_vars = num_vars
         self.constraints = constraints
@@ -46,9 +55,14 @@ class Simplex(object):
             self.solution = self.objective_maximize()
         self.optimize_val = self.coeff_matrix[0][-1]
 
+    """"
+    Este método é responsável por construir a matriz de coeficientes a partir das restrições do problema. Ele itera 
+    através de cada restrição e adiciona variáveis de folga, variáveis excedentes e variáveis ​​artificiais, conforme 
+    necessário. A matriz resultante é retornada.
+    """
     def construct_matrix_from_constraints(self):
-        num_s_vars = 0  # number of slack and surplus variables
-        num_r_vars = 0  # number of additional variables to balance equality and less than equal to
+        num_s_vars = 0  # Número de variáveis ​​de folga e excedente
+        num_r_vars = 0  # número de variáveis ​​adicionais para equilibrar a igualdade e menor que igual a 0
         for expression in self.constraints:
             if '>=' in expression:
                 num_s_vars += 1
@@ -97,8 +111,14 @@ class Simplex(object):
 
         return coeff_matrix, r_rows, num_s_vars, num_r_vars
 
+    """"
+    implementa a primeira fase do algoritmo simplex, que é usada para encontrar uma solução viável inicial. A primeira 
+    fase adiciona variáveis ​​artificiais para transformar o problema em um problema equivalente com solução viável. Ele 
+    também modifica a função objetivo para minimizar o valor dessas variáveis ​​artificiais. Em seguida, executa as 
+    iterações do algoritmo simplex para melhorar a solução atual.
+    """
     def phase1(self):
-        # Objective function here is minimize r1+ r2 + r3 + ... + rn
+        # A função objetivo aqui é minimizar r1+ r2 + r3 + ... + rn
         r_index = self.num_vars + self.num_s_vars
         for i in range(r_index, len(self.coeff_matrix[0])-1):
             self.coeff_matrix[0][i] = Fraction("-1/1")
@@ -128,6 +148,12 @@ class Simplex(object):
             key_column = max_index(self.coeff_matrix[0])
             condition = self.coeff_matrix[0][key_column] > 0
 
+    """
+    A função deste método é encontrar a linha da matriz de coeficientes que será usada como a linha chave em uma 
+    iteração do algoritmo simplex. O método normalize_to_pivot normaliza a linha chave dividindo cada elemento pelo 
+    valor do pivô. O método make_key_column_zero garante que todos os outros elementos na coluna da linha chave são 
+    iguais a zero.
+    """
     def find_key_row(self, key_column):
         min_val = float("inf")
         min_i = 0
@@ -140,7 +166,7 @@ class Simplex(object):
         if min_val == float("inf"):
             raise ValueError("Unbounded solution")
         if min_val == 0:
-            warn("Dengeneracy")
+            print("\nDegeneração\n")
         return min_i
 
     def normalize_to_pivot(self, key_row, pivot):
@@ -176,7 +202,7 @@ class Simplex(object):
     def check_alternate_solution(self):
         for i in range(len(self.coeff_matrix[0])):
             if self.coeff_matrix[0][i] and i not in self.basic_vars[1:]:
-                warn("Alternate Solution exists")
+                # print("\nSolução alternada não existe.\n")
                 break
 
     def objective_minimize(self):

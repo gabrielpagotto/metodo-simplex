@@ -1,27 +1,48 @@
+import os
 from simplex import Simplex
 
-# Primeira aplicação
-funcaoObjetivo = ('max', '4x_1 + 3x_2')
-restricoes = [
-    '2x_1 + 1x_2 <= 1000', 
-    '1x_1 + 1x_2 <= 800', 
-    '1x_1 + 0x_2 <= 400'
-]
+# Exemplo de inputs:
+#  - Informe o número de váriaveis: 2
+#  - Informe a função objetiva: max=4x_1 + 3x_2
+#  - Adicionar outra restrição: 2x_1 + 1x_2 <= 1000
 
-simplex = Simplex(num_vars=2, constraints=restricoes, objective_function=funcaoObjetivo)
+if __name__ == '__main__':
+    running = True
+    while running:
+        print("MÉTODO SIMPLEX\n")
 
-print(simplex.solution)
-print(simplex.optimize_val)
+        num_vars = int(input('Informe o número de váriaveis: '))
+        objective_function = input('Informe a função objetiva: ')
+        constraints = []
 
-# Segunda aplicação
-funcaoObjetivo = ('max', '10x_1 + 6.5x_2 + 8x_3 + 9x_4')
-restricoes = [
-    '1x_1 + 1x_2 + 1x_3 + 1x_4 <= 25', 
-    '9x_1 + 25x_2 + 7x_3 + 8x_4 <= 480', 
-    '11x_1 + 6x_2 + 11x_3 + 10x_4 <= 240', 
-]
+        adding_constraints = True
 
-simplex = Simplex(num_vars=4, constraints=restricoes, objective_function=funcaoObjetivo)
+        while adding_constraints:
+            constraint = input('Informe uma restrição: ')
+            constraints.append(constraint)
 
-print(simplex.solution)
-print(simplex.optimize_val)
+            ac: str = input('Adicionar outra restrição? (s/n): ')
+
+            if ac != 's' and ac != 'S':
+                adding_constraints = False
+
+        obj_parts = objective_function.split('=')
+
+        try:
+            simplex = Simplex(
+                num_vars=num_vars,
+                constraints=constraints,
+                objective_function=(obj_parts[0].lower(), obj_parts[1]))
+            
+            print('\n')
+            print(f'Solução: {simplex.solution}')
+            print(f'Valor otimizado: {simplex.optimize_val}')
+        except ValueError:
+            print('\nDados adicionados são inválidos')
+
+        ac: str = input('\nDeseja resolver novamente? (s/n): ')
+
+        if ac != 's' and ac != 'S':
+            running = False
+
+        os.system('clear')
