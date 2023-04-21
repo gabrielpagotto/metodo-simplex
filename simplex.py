@@ -61,7 +61,7 @@ class Simplex(object):
     necessário. A matriz resultante é retornada.
     """
     def construct_matrix_from_constraints(self):
-        num_s_vars = 0  # Número de variáveis ​​de folga e excedente
+        num_s_vars = 0  # número de variáveis ​​de folga e excedente
         num_r_vars = 0  # número de variáveis ​​adicionais para equilibrar a igualdade e menor que igual a 0
         for expression in self.constraints:
             if '>=' in expression:
@@ -78,7 +78,7 @@ class Simplex(object):
         coeff_matrix = [[Fraction("0/1") for i in range(total_vars+1)] for j in range(len(self.constraints)+1)]
         s_index = self.num_vars
         r_index = self.num_vars + num_s_vars
-        r_rows = [] # stores the non -zero index of r
+        r_rows = [] # armazena o índice diferente de zero de r
         for i in range(1, len(self.constraints)+1):
             constraint = self.constraints[i-1].split(' ')
 
@@ -92,12 +92,12 @@ class Simplex(object):
                         coeff_matrix[i][int(index)-1] = Fraction(coeff[:-1] + "/1")
 
                 elif constraint[j] == '<=':
-                    coeff_matrix[i][s_index] = Fraction("1/1")  # add surplus variable
+                    coeff_matrix[i][s_index] = Fraction("1/1")  # adicionar variável excedente
                     s_index += 1
 
                 elif constraint[j] == '>=':
-                    coeff_matrix[i][s_index] = Fraction("-1/1")  # slack variable
-                    coeff_matrix[i][r_index] = Fraction("1/1")   # r variable
+                    coeff_matrix[i][s_index] = Fraction("-1/1")  # variável de folga
+                    coeff_matrix[i][r_index] = Fraction("1/1")   # variável de equilíbrio
                     s_index += 1
                     r_index += 1
                     r_rows.append(i)
@@ -133,7 +133,7 @@ class Simplex(object):
                 self.basic_vars[i] = s_index
                 s_index += 1
 
-        # Run the simplex iterations
+        # Executa as iterações simplex
         key_column = max_index(self.coeff_matrix[0])
         condition = self.coeff_matrix[0][key_column] > 0
 
